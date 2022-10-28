@@ -1,0 +1,56 @@
+// Using BigQuery's SQL the data has been analyzed as follows.
+// Begin by analyzing the content performance by the number of unique users and views they had.
+SELECT
+  Content_Name,
+  COUNT(*) AS Content_View_Times,
+  COUNT(DISTINCT AppsFlyer_ID) AS Unique_Users,
+  COUNT(*)/COUNT(DISTINCT AppsFlyer_ID) AS Content_Views_Per_User
+FROM `appsflyer-data-analysis.AF_Organic_Media_Play_Analysis_Aug_2022.Organic_Content_View`
+GROUP BY Content_Type
+ORDER BY Content_View_Times DESC
+
+// Analyze the performance of the different types of content by the number of total views, unique users and average views per user.
+SELECT
+  Content_Type,
+  COUNT(*) AS Content_View_Times,
+  COUNT(DISTINCT AppsFlyer_ID) AS Unique_Users,
+  COUNT(*)/COUNT(DISTINCT AppsFlyer_ID) AS Content_Views_Per_User
+FROM `appsflyer-data-analysis.AF_Organic_Media_Play_Analysis_Aug_2022.Organic_Content_View`
+GROUP BY Content_Type
+ORDER BY Content_View_Times DESC
+
+// Investigating the number of views per day in that period.
+SELECT
+  Date,
+  format_date('%A', Date) as Week_Day,
+  COUNT(AppsFlyer_ID) as Content_Views,
+  COUNT(DISTINCT AppsFlyer_ID) as Unique_Users
+FROM `appsflyer-data-analysis.AF_Organic_Media_Play_Analysis_Aug_2022.Organic_Content_View`
+GROUP BY Date
+ORDER BY Date
+
+// Using count(1) and Case() functions to group and analyze views perfomance based on the part of the day.
+SELECT
+CASE
+WHEN LEFT(Time, 2) IN ('22','23','24','0:','1:','2:','3:','4:','5:') THEN "Night"
+WHEN LEFT(Time, 2) IN ('10','11','6:','7:','8:','9:') THEN "Morning"
+WHEN LEFT(Time, 2) IN ('12','13','14','15','16','17') THEN "Afternoon"
+WHEN LEFT(Time, 2) IN ('18','19','20','21') THEN "Evening"
+END AS part_of_day,
+COUNT(1) AS Views
+FROM `appsflyer-data-analysis.AF_Organic_Media_Play_Analysis_Aug_2022.Organic_Content_View`
+GROUP BY 1
+
+// Analyzing the device perfomance
+SELECT
+  Device,
+  COUNT(*) as No_of_Times_Used
+FROM `appsflyer-data-analysis.AF_Organic_Media_Play_Analysis_Aug_2022.Organic_Content_View`
+GROUP BY Device
+ORDER BY No_of_Times_Used DESC
+
+
+
+
+
+
